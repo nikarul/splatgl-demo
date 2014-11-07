@@ -1,0 +1,5 @@
+This is a simple demo of SplatGL written in Python.  It renders a single
+image and moves it back and forth across the screen.
+
+The image is a public domain image (CC0) from OpenGameArt.org.
+http://opengameart.org/content/cars-trucks-and-a-limo
