@@ -79,8 +79,12 @@ class Demo:
         self.x += self.offset
         if self.x >= self.width - self.image_width:
             self.offset = -self.abs_offset
+            # Just for fun, flip the image
+            splat.set_instance_flags(self.instance, splat.Flags.MIRROR_X)
         elif self.x < 1:
             self.offset = self.abs_offset
+            # Unflip the image
+            splat.set_instance_flags(self.instance, 0)
 
         # Update the instances position
         splat.set_instance_position(self.instance, self.x, self.y)
