@@ -4,9 +4,10 @@
 # It made available under the CC0 license (Public Domain)
 # http://creativecommons.org/publicdomain/zero/1.0/
 
-import ctypes, SplatGL as splat
+import ctypes
 from sdl2 import *
 from sdl2.sdlimage import IMG_Load_RW
+import splatgl
 
 class DemoException(Exception):
     pass
@@ -28,9 +29,9 @@ class Demo:
             raise DemoException("Couldn't load image from file '{}'.  SDL error was '{}'".format(filename, SDL_GetError()))
 
         # Create the Splat image from the surface
-        image = splat.create_image(lp_surf)
+        image = splatgl.create_image(lp_surf)
         if not image:
-            raise DemoException("Splat image creation failed:  {}".format(splat.get_error()))
+            raise DemoException("Splat image creation failed:  {}".format(splatgl.get_error()))
 
         return image
 
@@ -51,23 +52,23 @@ class Demo:
             raise DemoException("SDL window creation failed:  {}".format(SDL_GetError()))
 
         # Set up Splat to render
-        splat.prepare(self.window, self.width, self.height) # Viewport width and height can be different (result will be scaled to window size)
+        splatgl.prepare(self.window, self.width, self.height) # Viewport width and height can be different (result will be scaled to window size)
 
         # Create a canvas for the window
-        self.canvas = splat.create_canvas()
+        self.canvas = splatgl.create_canvas()
 
         # Create a single layer for the canvas
-        self.layer = splat.create_layer(self.canvas)
+        self.layer = splatgl.create_layer(self.canvas)
 
         # Load the test image
         self.image = self.load_image("test.png")
 
         # Save off the image width
-        width, height = splat.get_image_size(self.image)
+        width, height = splatgl.get_image_size(self.image)
         self.image_width = width
 
         # Create an instance of that image on the canvas
-        self.instance = splat.create_instance(self.image, # Image
+        self.instance = splatgl.create_instance(self.image, # Image
                                               self.layer, # Layer to attach the instance
                                               self.x, self.y, # X/Y canvas coordinates.
                                               0.0, 0.0, 1.0, 1.0, # Texture coordinates, we use the full image
@@ -80,30 +81,30 @@ class Demo:
         if self.x >= self.width - self.image_width:
             self.offset = -self.abs_offset
             # Just for fun, flip the image
-            splat.set_instance_flags(self.instance, splat.Flags.MIRROR_X)
+            splatgl.set_instance_flags(self.instance, splatgl.Flags.MIRROR_X)
         elif self.x < 1:
             self.offset = self.abs_offset
             # Unflip the image
-            splat.set_instance_flags(self.instance, 0)
+            splatgl.set_instance_flags(self.instance, 0)
 
         # Update the instances position
-        splat.set_instance_position(self.instance, self.x, self.y)
+        splatgl.set_instance_position(self.instance, self.x, self.y)
 
         # Render the canvas
-        splat.render(self.canvas)
+        splatgl.render(self.canvas)
 
     def finish(self):
         # Cleanup
-        splat.destroy_instance(self.instance)
+        splatgl.destroy_instance(self.instance)
         self.instance = None
 
-        splat.destroy_image(self.image)
+        splatgl.destroy_image(self.image)
         self.image = None
 
-        splat.destroy_layer(self.layer)
+        splatgl.destroy_layer(self.layer)
         self.layer = None
 
-        splat.destroy_canvas(self.canvas)
+        splatgl.destroy_canvas(self.canvas)
         self.canvas = None
 
         SDL_DestroyWindow(self.window)
